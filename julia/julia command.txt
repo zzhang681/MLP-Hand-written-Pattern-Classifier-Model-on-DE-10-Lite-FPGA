@@ -1,0 +1,13 @@
+cd("E:\\e297\\de10lite-hdl-master\\projects\\sdram_tester\\julia")
+cd("E:\\e297\\de10lite-hdl-master\\projects\\play_gif\\julia")
+]（进package）
+activate .
+(Julia pkg) activate .
+using Tester
+jtag=JTAG()
+
+
+
+import Pkg; Pkg.add("CSV"); Pkg.add("DataFrames")
+include("write_w.jl")
+

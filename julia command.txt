@@ -1,0 +1,12 @@
+cd("D:\\mlp_main\\julia")
+]
+activate .
+(Julia pkg) activate .
+using Tester
+jtag=JTAG()
+
+
+
+import Pkg; Pkg.add("CSV"); Pkg.add("DataFrames"); Pkg.add("ProgressMeter")
+include("write_w.jl")
+include("write_img.jl")
