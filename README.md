@@ -14,6 +14,5 @@ One could also add other display component such as VGA controller and VGA to the
 
 The complete code will be available on GitHub for contributing to the community.
 
-Figure 1. de10lite-hdl-master Top-Level Design Block Diagram
-
-
+Figure 1. Top-Level Design Block Diagram
+![Block Diagram](https://github.com/zzhang681/MLP-Hand-written-Pattern-Classifier-Model-on-DE-10-Lite-FPGA/blob/main/block.png)
