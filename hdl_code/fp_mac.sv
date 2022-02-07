@@ -161,6 +161,7 @@ parameter n_add = 3'b101;
 
 assign clk_en = 1'b1;
 
+//ready: the read request to the fifo to get a new group of inputs from SDRAM
 always @(*) begin
 	ready = 0;
 	begin
@@ -195,6 +196,7 @@ end
 
 //count 5 cycles and store the result///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //add a sram to store hidden
+//count: a buffer to count clock cycle delays, usually used for waiting IPs to match output to get a correct result
 always @(posedge clk) begin
 	if(reset) count <= 0;
 	else begin
@@ -345,6 +347,7 @@ result: 0.05+0.1+0.15+0.2+0.25=0.75 (3F400000)
 */
 
 //ns
+//next state logic
 always_comb begin
 	ns = cs;
 	case(cs)
@@ -454,7 +457,7 @@ always @(posedge clk) begin
 end
 */
 
-
+//start_mul: start all 4 multiply IP blocks
 always @(posedge clk) begin
 	if(reset) start_mul <= 0;
 	else if(cs == OP_START && ns == OP) start_mul <= 1;
@@ -464,6 +467,7 @@ always @(posedge clk) begin
 end
 
 //count_mul
+//a counter for the dummy done signal for multiply IP blocks
 always @(posedge clk) begin
 	if(reset) count_mul <= 0;
 	else begin
@@ -489,6 +493,7 @@ always @(posedge clk) begin
 	end
 end
 
+//done_mul1, done_mul2: dummy done signal for multiply IP blocks
 always @(*) begin
 	done_mul1 = 0;
 	done_mul2 = 0;
@@ -509,6 +514,7 @@ assign done_mul4 = count_mul == 3 ? 1:0;
 
 
 //address
+//used for incrementing address for SRAM IP
 always_ff @(posedge clk) begin
 	if(reset) begin 
 		address <= 0;
@@ -520,6 +526,7 @@ always_ff @(posedge clk) begin
 end
 
 //address_next
+//used for incrementing address for SRAM IP
 always_comb begin
 	address_next = address;
 	address_ho_next = address_ho;
@@ -601,17 +608,8 @@ always @(posedge clk) begin
 end
 
 
-
-//n = Boolean port which signals the beginning of a 
-//new data set to be accumulated. This should go high 
-//together with the first element in the new data set 
-//and should go low the next cycle. The data sets may be 
-//of variable length and a new data set may be started 
-//at any time. The accumulation result for an input 
-//is available after the reported latency. 
-
-
 //count_ho
+//counts how many times we do the multiplication addition in Hidden-output state
 always @(posedge clk) begin
 	if(reset) count_ho <= 0;
 	else begin
@@ -622,6 +620,8 @@ always @(posedge clk) begin
 end
 
 //count_num_mul
+//NOT USED :P
+/*
 always @(posedge clk) begin
 	if(reset) count_num_mul <= 0;
 	else begin
@@ -630,7 +630,7 @@ always @(posedge clk) begin
 		end
 	end
 end
-
+*/
 
 
 // ----------------------------------------------------------------- //
@@ -647,6 +647,7 @@ logic [0:0] q_comp;
 //assign index_pred1 = index_pred;
 
 //dataa_comp, datab_comp
+//reads the output layer data to compare among 10 output results
 always @(*) begin
 	dataa_comp = 0;
 	datab_comp = 0;
@@ -670,6 +671,7 @@ always @(*) begin
 	endcase
 end
 
+//index_comp: the actual index of every output data
 always @(*) begin
 	index_comp = 0;
 	case(cs)
@@ -680,6 +682,7 @@ always @(*) begin
 	endcase
 end
 
+//reg_comp, index_pred: some algorithm to keep the compare register having biggest data and index
 always @(posedge clk) begin
 	if(reset) begin
 		reg_comp <= 0;
@@ -727,6 +730,7 @@ end
 
 
 //assign start_add = done_mul1;
+//addition start signal
 always @(*) begin
 	start_add = 0;
 	case(cs)
@@ -745,7 +749,7 @@ always @(*) begin
 	endcase
 end
 
-
+//data input for addition
 always @(*) begin
 	dataa1_add = 0;
 	datab1_add = 0;
@@ -840,7 +844,7 @@ always @(*) begin
 	endcase
 end
 
-//result_add_reg
+//result_add_reg: the register that stores the addition results, will be put into hidden layer SRAM
 always @(posedge clk) begin
 	if(reset) result_add_reg <= 0;
 	else begin
@@ -859,6 +863,7 @@ always @(posedge clk) begin
 end
 
 logic [127:0] relu_temp;
+//a register to do ReLU algorithm for hidden layer
 always @(*) begin
 	relu_temp = 0;
 	if(cs == RELU) begin 
@@ -870,6 +875,7 @@ always @(*) begin
 end
 
 logic [63:0] relu_temp_ho;
+//a register to do ReLU algorithm for output layer
 always @(*) begin
 	relu_temp_ho = 0;
 	if(cs == HO_RELU) begin 
@@ -983,6 +989,8 @@ end
 
 
 //x15;
+//NOT USED :P
+/*
 always @(*) begin
 	x0 = 0;
 	x1 = 0;
@@ -1013,9 +1021,10 @@ always @(*) begin
 		
 	endcase
 end
+*/
 	
 
-//dataa1 - 4. datab1 - 4
+//dataa1 - 4. datab1 - 4 input data for multiplication
 always @(*) begin
 	dataa1 = 0;
 	dataa2 = 0;
@@ -1091,7 +1100,7 @@ end
 
 
 
-//weight_reg_ho
+//weight_reg_ho: a register needed in hidden-output stage to control the weight data
 always @(posedge clk) begin
 	if(reset) weight_reg_ho <= 0;
 	else begin
@@ -1099,10 +1108,9 @@ always @(posedge clk) begin
 	end
 end
 
-//wdata_ho
-
-
 //highbit_ho
+//Also NOT USED
+/*
 always @(posedge clk) begin
 	if(reset) highbit_ho <= 0;
 	else begin
@@ -1118,13 +1126,13 @@ always @(posedge clk) begin
 		end
 	end
 end
-
+*/
 
 
 // ----------------------------------------------------------------- //
 
 // ------------------------- TEST SIGNALS -------------------------- //
-
+//for debug using only
 logic [31:0] data_test;
 
 always_ff @(posedge clk) begin
