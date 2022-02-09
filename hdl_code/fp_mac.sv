@@ -1293,7 +1293,8 @@ rise_edge_trigger ret1(
 	.rise_edge(next_in_edge)
 );
 
-
+//address: 4 data per address, 16 addresses in total
+//delay cycle: 3
 hid_ram ramh(
 	.address(address_hidden),
 	.clock(clk),
@@ -1302,6 +1303,8 @@ hid_ram ramh(
 	.q(rdata_hidden)
 );
 
+//address: 2 data per address, 5 addresses in total
+//delay cycle: 3
 output_ram ramo(
 	.address(address_out),
 	.clock(clk),
